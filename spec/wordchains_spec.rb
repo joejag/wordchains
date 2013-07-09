@@ -11,10 +11,10 @@ describe Wordchains do
         end
     end
 
-    describe "#suitable_next_word" do 
+    describe "#next_word" do 
         it "find best next option" do
             s = Solver.new(%w(bat mat))
-            s.suitable_next_word([], 'cat', 'mat').should eq 'mat'
+            s.next_word([], 'cat', 'mat').should eq 'mat'
         end
     end
 
