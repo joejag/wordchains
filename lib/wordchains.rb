@@ -1,8 +1,14 @@
 require "wordchains/version"
 
-module Wordchains
-    class Solver
+class Hash
+    def sort_by_values
+        self.sort {|a,b| a[1] <=> b[1] }
+    end
+end
 
+module Wordchains
+
+    class Solver
         def initialize(word_list)
             @word_list = word_list
         end
@@ -12,36 +18,35 @@ module Wordchains
 
             path = [from]
             while path.last != to
-                candidate = suitable_next_word(path, path.last, to)
-                if candidate != nil
-                    path << candidate
+                word = suitable_next_word(path, path.last, to)
+                if word != nil
+                    path << word
                 else 
-                    return [] if path == [from]
+                    raise Exception.new('unsolvable') if path == [from]
                     @word_list.delete path.pop
                 end
             end
             path
         end
 
-        def suitable_next_word(path, cur_word, target)
+        def suitable_next_word(words_in_path, cur_word, target)
             candidates = {}
-            @word_list.each do |word|
-                next if path.include? word
-                next if WordDiff.diff?(cur_word, word) != 1
-                candidates[word] = WordDiff.diff?(word, target)
+            possible_next_words(words_in_path, cur_word, target).each do |word|
+                candidates[word] = WordDiff.distance_between(word, target)
             end
+            return nil if candidates.empty?
+            candidates.sort_by_values.first[0]
+        end
 
-            return nil if candidates.size == 0
-            candidates.sort {|a,b| a[1] <=> b[1] }.first[0]
+        def possible_next_words(words_in_path, cur_word, target)
+            @word_list.select do |word|
+                not words_in_path.include? word and WordDiff.distance_between(word, cur_word) == 1
+            end
         end
     end
 
     class WordDiff
-        def self.reduced_dict(word_list, size_desired)
-            word_list.select { | word| word.size == size_desired}
-        end
-
-        def self.diff?(a,b)
+        def self.distance_between(a,b)
             differences = 0
             (0..a.size).each do |letter_index|
                 differences += 1 if  a[letter_index] != b[letter_index]
@@ -49,4 +54,5 @@ module Wordchains
             differences
         end
     end
+
 end
