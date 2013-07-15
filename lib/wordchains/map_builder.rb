@@ -4,8 +4,8 @@ class MapBuilder
         @dictionary = dictionary
     end
 
-    def nearby_words target 
-        @dictionary.select do |word|
+    def nearby_words(dictionary, target)
+        dictionary.select do |word|
             WordDiff.distance_between(word, target) == 1
         end
     end
@@ -13,15 +13,21 @@ class MapBuilder
     def build
         result = {}
         @dictionary.each do |word|
-            result[word] = nearby_words(word)
+            result[word] = []
+        end
+
+        result.keys.each do |word|
+            result.keys.each do |known_word|
+                if WordDiff.distance_between(word, known_word) == 1
+                    result[known_word] << word
+                end
+            end
         end
         result
     end
 
     def best_match_from_possibilities(possible, target)
-        candidates = {}
-        possible.each { |word| candidates[word] = WordDiff.distance_between(word, target) }
-        candidates.sort_by_values.first[0]
+        Iterative.new(@dictionary).best_match_from_possibilities(possible, target)
     end
 
     def find_path(from, to)

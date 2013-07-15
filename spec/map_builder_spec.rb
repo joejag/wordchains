@@ -7,11 +7,11 @@ describe MapBuilder do
         describe "#nearby_words" do
             it 'should return a list of mutable words for a given word' do
                 subject = MapBuilder.new(%w(bat mat zoo))
-                subject.nearby_words('cat').should eq %w(bat mat)
+                subject.nearby_words(%w(bat mat zoo), 'cat').should eq %w(bat mat)
             end
             it "should not include the given word in the list" do
                 subject = MapBuilder.new(%w(bat mat zoo))
-                subject.nearby_words('bat').should eq %w(mat)
+                subject.nearby_words(%w(bat mat zoo), 'bat').should eq %w(mat)
             end
         end
 
