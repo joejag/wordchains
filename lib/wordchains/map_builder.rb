@@ -1,4 +1,5 @@
-class Tree
+class MapBuilder
+
     def initialize(dictionary)
         @dictionary = dictionary
     end
@@ -39,4 +40,5 @@ class Tree
         end
         path
     end
+
 end

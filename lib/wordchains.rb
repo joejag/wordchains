@@ -1,6 +1,6 @@
 require_relative 'wordchains/word_diff.rb'
 require_relative 'wordchains/iterative.rb'
-require_relative 'wordchains/tree.rb'
+require_relative 'wordchains/map_builder.rb'
 
 class Hash
     def sort_by_values
