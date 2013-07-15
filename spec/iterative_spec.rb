@@ -1,21 +1,31 @@
 require 'wordchains'
-
 include Wordchains
 
-describe Wordchains do
-    include Wordchains
+describe Iterative do
 
-    describe "WordDiff" do
-        it "tells you the letters diference between two words" do
-            WordDiff.distance_between('cat', 'dog').should eq 3
-            WordDiff.distance_between('cat', 'cat').should eq 0
+    describe "#possible_next_words" do 
+        it "should return all possible next words" do
+            s = Iterative.new(%w(bat mat zoo))
+            s.possible_next_words(%w(cat), 'cat').should eq %w(bat mat)
+        end
+
+        it "should not suggest words we have already used" do
+            s = Iterative.new(%w(cat bat))
+            s.possible_next_words(%w(cat), 'cat').should eq %w(bat)
+        end
+    end
+
+    describe "#best_match_from_possibilities" do
+        it "should suggest the word with the least distance to the target word" do
+            s = Iterative.new(%w(bat mat))
+            s.next_word([], 'cat', 'mat').should eq 'mat'
         end
     end
 
     describe "#next_word" do 
-        it "find best next option" do
+        it "should use #possible_next_words & #best_match_from_possibilities to find next word" do
             s = Iterative.new(%w(bat mat))
-            s.next_word([], 'cat', 'mat').should eq 'mat'
+            s.best_match_from_possibilities(%w(bat mat), 'but').should eq 'bat'
         end
     end
 
@@ -24,8 +34,7 @@ describe Wordchains do
             s = Iterative.new([])
             expect { s.find_path('cat', 'dog') }.to raise_error
         end
-
-        it "can solve answers in the same order in the wordlist" do
+        it "can solve answers given a linear dictionary" do
             s = Iterative.new(%w(cat cot cog dog))
             s.find_path('cat', 'dog').should eq %w(cat cot cog dog)
         end
@@ -35,16 +44,13 @@ describe Wordchains do
             s.find_path('cat', 'dog').should eq %w(cat cot cog dog)
         end
 
-        it "can turn lead into gold" do
-            s = Iterative.new read_dictionary(4)
-            s.find_path('lead', 'gold').should eq %w(lead load goad gold)
+        context "solving the problem" do
+            it "can turn lead into gold" do
+                s = Iterative.new read_dictionary(4)
+                s.find_path('lead', 'gold').should eq %w(lead load goad gold)
+            end
         end
-
     end
 
-    def read_dictionary(max_word_length)
-        a = []
-        open('dictionary.txt').each_line { |word| a << word.chomp }
-        a.select { | word| word.size == max_word_length}
-    end
+
 end

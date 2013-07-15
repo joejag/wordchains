@@ -5,8 +5,6 @@ class Iterative
     end
 
     def find_path(from, to)
-        @dictionary.delete from
-
         path = [from]
         while path.last != to
             word = next_word(path, path.last, to)
