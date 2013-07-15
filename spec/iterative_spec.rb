@@ -4,7 +4,7 @@ include Wordchains
 describe Iterative do
 
     describe "#possible_next_words" do 
-        it "should return all possible next words" do
+        it "should return dictionary words that are one letter apart from the current word" do
             s = Iterative.new(%w(bat mat zoo))
             s.possible_next_words(%w(cat), 'cat').should eq %w(bat mat)
         end
@@ -30,16 +30,16 @@ describe Iterative do
     end
 
     describe "#find_path" do
-        it "handles unsolvable problems" do
+        it "should handle unsolvable problems" do
             s = Iterative.new([])
             expect { s.find_path('cat', 'dog') }.to raise_error
         end
-        it "can solve answers given a linear dictionary" do
+        it "should solve answers given a linear dictionary" do
             s = Iterative.new(%w(cat cot cog dog))
             s.find_path('cat', 'dog').should eq %w(cat cot cog dog)
         end
 
-        it "can backtrack to a solution" do
+        it "should backtrack to a solution given a non linear dictionary" do
             s = Iterative.new(%w(cat cam cot cog dog))
             s.find_path('cat', 'dog').should eq %w(cat cot cog dog)
         end
